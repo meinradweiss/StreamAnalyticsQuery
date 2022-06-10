@@ -1,0 +1,113 @@
+
+
+-- [BArrayInArray]
+
+-- "startFile": "BArrayInArray.asaql",
+
+
+-- Ctrl+K+C/Ctrl+K+U
+
+-- SELECT *
+-- FROM [BArrayInArray]
+
+
+
+-- Pick value from Json document and convert it to datetime
+
+-- SELECT TRY_CAST(IotDataInput.Data.OperationTimeStamp AS DATETIME)                 AS [Ts]
+--        ,*
+-- FROM [BArrayInArray] AS IotDataInput
+
+
+
+-- Get record properties from Data element
+
+-- SELECT 
+--    TRY_CAST(IotDataInput.Data.OperationTimeStamp AS DATETIME)                 AS [Ts]
+--   ,Data.PropertyName
+--   ,Data.PropertyValue
+-- FROM [BArrayInArray] AS IotDataInput
+--      CROSS APPLY GetRecordProperties(IotDataInput.Data) AS Data
+
+
+
+-- Remove un-needed elements
+     
+SELECT 
+   TRY_CAST(IotDataInput.Data.OperationTimeStamp AS DATETIME)                 AS [Ts]
+  ,Data.PropertyName
+  ,Data.PropertyValue
+FROM [BArrayInArray] AS IotDataInput
+     CROSS APPLY GetRecordProperties(IotDataInput.Data) AS Data
+WHERE Data.PropertyName <> 'OperationCurveData' 
+  AND Data.PropertyName <> 'OperationTimeStamp' 
+
+
+
+
+/*
+-- This works
+
+with a
+as
+(
+SELECT 
+   TRY_CAST(IotDataInput.Data.OperationTimeStamp AS DATETIME)                 AS [Ts]
+  ,Data.PropertyName
+  ,Data.PropertyValue
+  ,[OperationCurveData].[ArrayValue].[Values] as x
+  --,v.*
+ -- ,v.ArrayValue            as av
+ -- ,v.ArrayValue.Value
+FROM [BArrayInArray] AS IotDataInput
+     CROSS APPLY GetRecordProperties(IotDataInput.Data) AS Data
+	   CROSS APPLY GetArrayElements(IotDataInput.Data.OperationCurveData) AS OperationCurveData
+WHERE Data.PropertyName = 'OperationCurveData' 	 
+) 
+select a.*
+  ,y.*
+  ,y.ArrayValue
+  ,y.ArrayIndex 
+  ,y.ArrayValue.Value 
+  ,y.ArrayValue.TimeOffsetInMs
+from a
+ cross apply GetArrayElements(a.x) AS y
+
+ */
+
+/*
+-- ***
+
+WITH IotDataInput_Data
+AS
+(
+	SELECT 
+      TRY_CAST(IotDataInput.Data.OperationTimeStamp AS DATETIME)    AS [Ts]
+     ,IotDataInput_Data.PropertyName
+     ,IotDataInput_Data.PropertyValue                               AS OperationCurveData
+    FROM [BArrayInArray] AS IotDataInput
+       CROSS APPLY GetRecordProperties(IotDataInput.Data)           AS IotDataInput_Data
+    WHERE IotDataInput_Data.PropertyName = 'OperationCurveData' 	 
+
+)
+, OperationCurveDataElements
+AS
+(
+	SELECT 
+	    IotDataInput_Data.[Ts]
+	   ,OperationCurveDataElements.ArrayValue.[Values]                   AS OperationCurveDataElementsValues
+	   ,OperationCurveDataElements.ArrayValue.SensorId
+    FROM IotDataInput_Data
+	  CROSS APPLY GetArrayElements(IotDataInput_Data.OperationCurveData) AS OperationCurveDataElements
+)
+SELECT 
+   OperationCurveDataElements.[Ts]
+  ,DATEADD(millisecond, CurveValues.ArrayValue.TimeOffsetInMs, OperationCurveDataElements.[Ts]) AS RealTs
+  ,OperationCurveDataElements.[SensorId]
+  ,CurveValues.ArrayValue.Value
+  ,CurveValues.ArrayValue.TimeOffsetInMs
+FROM OperationCurveDataElements
+  CROSS APPLY  GetArrayElements(OperationCurveDataElements.OperationCurveDataElementsValues) AS CurveValues
+
+*/  
+

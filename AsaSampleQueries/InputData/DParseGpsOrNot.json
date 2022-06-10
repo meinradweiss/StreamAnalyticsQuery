@@ -1,0 +1,200 @@
+[
+	{
+	"app_eui": "70B3D5993FFFFFC2",
+	"dc": {
+		"balance": 9864,
+		"nonce": 2
+	},
+	"decoded": {
+		"payload": {
+			"batteryLevel": 212,
+			"containsGps": false,
+			"containsOnboardSensors": true,
+			"containsSpecial": false,
+			"crc": 0,
+			"maxAccelerationHistory": 16.384,
+			"maxAccelerationNew": 3.328,
+			"sensorContent": {
+				"buttonEventInfo": false,
+				"containsAccelerometerCurrent": false,
+				"containsAccelerometerMax": true,
+				"containsBluetoothData": false,
+				"containsExternalSensors": false,
+				"containsLight": false,
+				"containsTemperature": false,
+				"containsWifiPositioningData": true
+			},
+			"uplinkReasonButton": true,
+			"uplinkReasonGpio": false,
+			"uplinkReasonMovement": true,
+			"wifiInfo": {
+				"accessPoints": [
+					{
+						"macAddress": "6e:a0:98:aa:48:11",
+						"signalStrength": -51
+					},
+					{
+						"macAddress": "74:a5:28:14:13:72",
+						"signalStrength": -56
+					},
+					{
+						"macAddress": "b8:3a:5a:d9:61:60",
+						"signalStrength": -60
+					},
+					{
+						"macAddress": "b8:3a:5a:d9:61:61",
+						"signalStrength": -60
+					}
+				],
+				"status": "success",
+				"statusCode": 0
+			}
+		},
+		"status": "success"
+	},
+	"dev_eui": "70B3D59930000D1B",
+	"devaddr": "F8010048",
+	"fcnt": 49,
+	"hotspots": [
+		{
+			"channel": 0,
+			"frequency": 868.0999755859375,
+			"hold_time": 4969,
+			"id": "11psoprLCHYfHrCe6w46tZ9E5Yx3NmhfFxJrkXnZvfAfziEhHCt",
+			"lat": 47.44322226739767,
+			"long": 8.528920919611429,
+			"name": "long-taupe-sardine",
+			"reported_at": 1651500551361,
+			"rssi": -128,
+			"snr": -13,
+			"spreading": "SF12BW125",
+			"status": "success"
+		}
+	],
+	"id": "eae20b97-28e8-4eab-be2e-f92e085704b2",
+	"metadata": {
+		"adr_allowed": false,
+		"cf_list_enabled": false,
+		"labels": [
+			{
+				"id": "c5c20be6-56e2-4396-92db-055a463d8cfa",
+				"name": "Pylonian",
+				"organization_id": "88a0c6f7-062f-44ea-8cc6-942893914e1a"
+			}
+		],
+		"multi_buy": 1,
+		"organization_id": "88a0c6f7-062f-44ea-8cc6-942893914e1a",
+		"rx_delay": 1,
+		"rx_delay_actual": 1,
+		"rx_delay_state": "rx_delay_established"
+	},
+	"name": "PoC_Pylonian_demo2",
+	"payload": "EwDUGA0AQAAkbqCYqkgRzXSlKBQTcsi4OlrZYWDEuDpa2WFhxA==",
+	"payload_size": 37,
+	"port": 1,
+	"raw_packet": "gPgBAEiAMQABN5iUKoxjSNOf6EmGdTirB0G8K+GwTnOqRtPIoHh6xgPwRQ4wqaXInuc=",
+	"replay": true,
+	"reported_at": 1651500551361,
+	"type": "uplink",
+	"uuid": "25ac405e-5f71-4857-829e-eb7c244b7de2"
+}
+,
+{
+	"app_eui": "70B3D5993FFFFFC2",
+	"dc": {
+		"balance": 9864,
+		"nonce": 2
+	},
+	"decoded": {
+		"payload": {
+			"accelerometer": {
+				"x": 0.048,
+				"y": -0.016,
+				"z": -1.024
+			},
+		   "batteryLevel": 81.56862745098039,
+			"containsGps": true,
+			"containsOnboardSensors": true,
+			"containsSpecial": false,
+			"crc": 215,
+			"gps": {
+				"latitude": 0,
+				"longitude": 0,
+				"navStat": 22
+			},
+			"gps_altRef": 0,
+			"gps_cog": 0,
+			"gps_hAcc": 12,
+			"gps_hdop": 23.1,
+			"gps_numSvs": 0,
+			"gps_sog": 0,
+			"gps_vAcc": 117,
+			"lightIntensity": 11.04,
+			"location": "(0,0)",
+			"maxAccelerationHistory": 16.256,
+			"maxAccelerationNew": 0.928,
+			"sensorContent": {
+				"buttonEventInfo": false,
+				"containsAccelerometerCurrent": false,
+				"containsAccelerometerMax": true,
+				"containsBluetoothData": false,
+				"containsExternalSensors": false,
+				"containsLight": true,
+				"containsTemperature": true,
+				"containsWifiPositioningData": false
+			},
+			"temperature": 25.35,
+			"uplinkReasonButton": false,
+			"uplinkReasonGpio": false,
+			"uplinkReasonMovement": true
+		}
+		,
+		"status": "success"
+	},
+	"dev_eui": "70B3D59930000D1B",
+	"devaddr": "F8010048",
+	"fcnt": 49,
+	"hotspots": [
+		{
+			"channel": 0,
+			"frequency": 868.0999755859375,
+			"hold_time": 4969,
+			"id": "11psoprLCHYfHrCe6w46tZ9E5Yx3NmhfFxJrkXnZvfAfziEhHCt",
+			"lat": 47.44322226739767,
+			"long": 8.528920919611429,
+			"name": "long-taupe-sardine",
+			"reported_at": 1651500551361,
+			"rssi": -128,
+			"snr": -13,
+			"spreading": "SF12BW125",
+			"status": "success"
+		}
+	],
+	"id": "eae20b97-28e8-4eab-be2e-f92e085704b2",
+	"metadata": {
+		"adr_allowed": false,
+		"cf_list_enabled": false,
+		"labels": [
+			{
+				"id": "c5c20be6-56e2-4396-92db-055a463d8cfa",
+				"name": "Pylonian",
+				"organization_id": "88a0c6f7-062f-44ea-8cc6-942893914e1a"
+			}
+		],
+		"multi_buy": 1,
+		"organization_id": "88a0c6f7-062f-44ea-8cc6-942893914e1a",
+		"rx_delay": 1,
+		"rx_delay_actual": 1,
+		"rx_delay_state": "rx_delay_established"
+	},
+	"name": "PoC_Pylonian_demo2",
+	"payload": "EwDUGA0AQAAkbqCYqkgRzXSlKBQTcsi4OlrZYWDEuDpa2WFhxA==",
+	"payload_size": 37,
+	"port": 1,
+	"raw_packet": "gPgBAEiAMQABN5iUKoxjSNOf6EmGdTirB0G8K+GwTnOqRtPIoHh6xgPwRQ4wqaXInuc=",
+	"replay": true,
+	"reported_at": 1651500551361,
+	"type": "uplink",
+	"uuid": "25ac405e-5f71-4857-829e-eb7c244b7de2"
+}
+]

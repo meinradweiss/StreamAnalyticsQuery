@@ -1,0 +1,7 @@
+{
+    "InputAlias": "XNumberReferenceList",
+    "Type": "Reference data",
+    "Format": "Csv",
+    "FilePath": "../InputData/XNumberRefereneList.csv",
+    "ScriptType": "InputMock"
+}

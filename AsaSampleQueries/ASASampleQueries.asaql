@@ -1,0 +1,274 @@
+
+
+
+
+WITH 
+IoTDataInputWithSignalName  AS
+(
+
+SELECT 
+   TRY_CAST(DATEADD(SECOND,[IoTDataInput].reported_at/1000,'1970-01-01') AS DATETIME)                AS [Ts]
+  ,[IoTDataInput].dev_eui                                                                            AS [DeviceId]
+  ,payload.PropertyName                                                                              AS [PropertyName]
+  ,payload.PropertyValue																			   AS [PropertyValue]
+  ,payload.PropertyName                                                                              AS [Measurand]
+  ,CONCAT([IoTDataInput].dev_eui, '_', payload.PropertyName)                                         AS [SignalName]
+  ,TRY_CAST(payload.PropertyValue AS FLOAT)                                                          AS [MeasurementValue]
+  ,CASE WHEN TRY_CAST(payload.PropertyValue AS FLOAT) IS NULL THEN payload.PropertyValue                  
+                                                             ELSE NULL 
+   END                                                                                               AS [MeasurementText]
+  ,[IoTDataInput].reported_at                                                                        AS [SourceTS]
+  ,payload.PropertyValue                                                                             AS [SourceMeasurementValue]
+  ,payload.PropertyValue                                                                             AS [SourceMeasurementText]
+  ,[IoTDataInput]                                                                                    AS [SourceMessage] 
+FROM [DParseGpsOrNot] as [IoTDataInput]
+CROSS APPLY GETRECORDPROPERTIES([IoTDataInput].decoded.payload) as payload 
+WHERE  payload.PropertyName <> 'accelerometer'              -- They will be handled with next queries
+--  AND  payload.PropertyName <> 'gps'                      -- Optional filter -> can be useful to keep it twice
+ 
+UNION ALL
+
+SELECT 
+  TRY_CAST(DATEADD(SECOND,[IoTDataInput].reported_at/1000,'1970-01-01') AS DATETIME)                 AS [Ts]
+  ,[IoTDataInput].dev_eui                                                                            AS [DeviceId]
+  ,gps.PropertyName                                                                                  AS [PropertyName]
+  ,gps.PropertyValue																				   AS [PropertyValue]
+  ,gps.PropertyName                                                                                  AS [Measurand]
+  ,CONCAT([IoTDataInput].dev_eui, '_', gps.PropertyName)                                             AS [SignalName]
+  ,TRY_CAST(gps.PropertyValue AS FLOAT)                                                              AS [MeasurementValue]
+  ,CASE WHEN TRY_CAST(gps.PropertyValue AS FLOAT) IS NULL THEN gps.PropertyValue                  
+                                                          ELSE NULL 
+  END                                                                                                AS [MeasurementText]
+  ,[IoTDataInput].reported_at                                                                        AS [SourceTS]
+  ,gps.PropertyValue                                                                                 AS [SourceMeasurementValue]
+  ,gps.PropertyValue                                                                                 AS [SourceMeasurementText]
+  ,[IoTDataInput]                                                                                    AS [SourceMessage] 
+  FROM [DParseGpsOrNot] as [IoTDataInput]
+  CROSS APPLY GETRECORDPROPERTIES([IoTDataInput].decoded.payload.gps) AS gps 
+
+
+UNION ALL
+
+SELECT 
+  TRY_CAST(DATEADD(SECOND,[IoTDataInput].reported_at/1000,'1970-01-01') AS DATETIME)                 AS [Ts]
+  ,[IoTDataInput].dev_eui                                                                            AS [DeviceId]
+  ,CONCAT('accelerometer.', accelerometer.PropertyName)                                              AS [PropertyName]
+  ,accelerometer.PropertyValue                                                                       AS [PropertyValue]
+  ,CONCAT('accelerometer.', accelerometer.PropertyName)                                              AS [Measurand]
+  ,CONCAT([IoTDataInput].dev_eui, '_accelerometer.', accelerometer.PropertyName)                     AS [SignalName]
+  ,TRY_CAST(accelerometer.PropertyValue AS FLOAT)                                                    AS [MeasurementValue]
+  ,CASE WHEN TRY_CAST(accelerometer.PropertyValue AS FLOAT) IS NULL THEN accelerometer.PropertyValue                  
+                                                   ELSE NULL 
+  END                                                                                                AS [MeasurementText]
+  ,[IoTDataInput].reported_at                                                                        AS [SourceTS]
+  ,accelerometer.PropertyValue                                                                       AS [SourceMeasurementValue]
+  ,accelerometer.PropertyValue                                                                       AS [SourceMeasurementText]
+  ,[IoTDataInput]                                                                                    AS [SourceMessage] 
+  FROM [DParseGpsOrNot] as [IoTDataInput]
+  CROSS APPLY GETRECORDPROPERTIES([IoTDataInput].decoded.payload.accelerometer) AS accelerometer 
+)
+-- Local test
+SELECT *
+FROM IoTDataInputWithSignalName  
+
+
+
+
+
+
+/*
+
+-- [ASimpleJSON]
+
+SELECT 
+   TRY_CAST(EventTimestamp AS DATETIME)                 AS [Ts]
+   ,IoTHub.ConnectionDeviceId                           AS [DeviceId]
+   ,SignalLabel                                         AS [Measurand]
+   ,CONCAT(IoTHub.ConnectionDeviceId, '_', SignalLabel) AS [SignalName]
+   ,TRY_CAST([Value] AS FLOAT)                          AS [MeasurementValue]
+   ,CASE WHEN LEN([Text]) > 0 THEN [Text]   
+   						                ELSE NULL 
+   END                                                  AS [MeasurementText]
+   ,EventTimestamp                                      AS [SourceTS]
+   ,[Value]                                             AS [SourceMeasurementValue]
+   ,[Text]                                              AS [SourceMeasurementText]
+  
+   ,[ASimpleJSON]                                       AS [SourceMessage]
+
+FROM [ASimpleJSON]
+*/
+
+/*
+SELECT *
+FROM [BArrayInArray]
+*/
+
+/*
+SELECT TRY_CAST(IotDataInput.Data.OperationTimeStamp AS DATETIME)                 AS [Ts]
+       ,*
+FROM [BArrayInArray] AS IotDataInput
+*/
+
+
+/*
+SELECT 
+   TRY_CAST(IotDataInput.Data.OperationTimeStamp AS DATETIME)                 AS [Ts]
+  ,Data.PropertyName
+  ,Data.PropertyValue
+FROM [BArrayInArray] AS IotDataInput
+     CROSS APPLY GetRecordProperties(IotDataInput.Data) AS Data
+
+*/
+
+/*
+SELECT 
+   TRY_CAST(IotDataInput.Data.OperationTimeStamp AS DATETIME)                 AS [Ts]
+  ,Data.PropertyName
+  ,Data.PropertyValue
+FROM [BArrayInArray] AS IotDataInput
+     CROSS APPLY GetRecordProperties(IotDataInput.Data) AS Data
+WHERE Data.PropertyName <> 'OperationCurveData' 
+  AND Data.PropertyName <> 'OperationTimeStamp' 
+
+
+*/
+
+/*
+-- This works
+
+with a
+as
+(
+SELECT 
+   TRY_CAST(IotDataInput.Data.OperationTimeStamp AS DATETIME)                 AS [Ts]
+  ,Data.PropertyName
+  ,Data.PropertyValue
+  ,[OperationCurveData].[ArrayValue].[Values] as x
+  --,v.*
+ -- ,v.ArrayValue            as av
+ -- ,v.ArrayValue.Value
+FROM [BArrayInArray] AS IotDataInput
+     CROSS APPLY GetRecordProperties(IotDataInput.Data) AS Data
+	   CROSS APPLY GetArrayElements(IotDataInput.Data.OperationCurveData) AS OperationCurveData
+WHERE Data.PropertyName = 'OperationCurveData' 	 
+) 
+select a.*
+  ,y.*
+  ,y.ArrayValue
+  ,y.ArrayIndex 
+  ,y.ArrayValue.Value 
+  ,y.ArrayValue.TimeOffsetInMs
+from a
+ cross apply GetArrayElements(a.x) AS y
+
+ */
+
+/*
+-- ***
+
+WITH IotDataInput_Data
+AS
+(
+	SELECT 
+      TRY_CAST(IotDataInput.Data.OperationTimeStamp AS DATETIME)    AS [Ts]
+     ,IotDataInput_Data.PropertyName
+     ,IotDataInput_Data.PropertyValue                               AS OperationCurveData
+    FROM [BArrayInArray] AS IotDataInput
+       CROSS APPLY GetRecordProperties(IotDataInput.Data)           AS IotDataInput_Data
+    WHERE IotDataInput_Data.PropertyName = 'OperationCurveData' 	 
+
+)
+, OperationCurveDataElements
+AS
+(
+	SELECT 
+	    IotDataInput_Data.[Ts]
+	   ,OperationCurveDataElements.ArrayValue.[Values]                   AS OperationCurveDataElementsValues
+	   ,OperationCurveDataElements.ArrayValue.SensorId
+    FROM IotDataInput_Data
+	  CROSS APPLY GetArrayElements(IotDataInput_Data.OperationCurveData) AS OperationCurveDataElements
+)
+SELECT 
+   OperationCurveDataElements.[Ts]
+  ,DATEADD(millisecond, CurveValues.ArrayValue.TimeOffsetInMs, OperationCurveDataElements.[Ts]) AS RealTs
+  ,OperationCurveDataElements.[SensorId]
+  ,CurveValues.ArrayValue.Value
+  ,CurveValues.ArrayValue.TimeOffsetInMs
+FROM OperationCurveDataElements
+  CROSS APPLY  GetArrayElements(OperationCurveDataElements.OperationCurveDataElementsValues) AS CurveValues
+
+*/  
+
+
+
+/* Part 1
+
+WITH CurveArrays
+AS
+(
+  SELECT 
+     IotDataInput.machine
+    ,IotDataInput.material_number
+    ,IotDataInput_Data.PropertyName                              AS ArrayName
+    ,IotDataInput_Data.PropertyValue                             AS OperationCurveData
+  FROM [CParallelArray] AS IotDataInput
+    CROSS APPLY GetRecordProperties(IotDataInput.Data)           AS IotDataInput_Data
+)
+
+  
+  SELECT 
+     CurveArrays.machine
+    ,CurveArrays.material_number
+    ,CurveArrays.ArrayName
+	  ,GetArrayElement(CurveArrays.OperationCurveData.value,     (CAST(XNumberReferenceList.Id AS BIGINT))) AS valuePart
+	  ,GetArrayElement(CurveArrays.OperationCurveData.timestamp, (CAST(XNumberReferenceList.Id AS BIGINT))) AS timestampPart
+  FROM   CurveArrays as CurveArrays
+    INNER JOIN [XNumberReferenceList] as XNumberReferenceList
+      ON CAST(XNumberReferenceList.Id AS BIGINT) < GetArrayLength(CurveArrays.OperationCurveData.value)
+
+
+*/
+
+
+
+
+/*
+
+WITH CurveArrays
+AS
+(
+  SELECT 
+     IotDataInput.machine
+    ,IotDataInput.material_number
+    ,IotDataInput_Data.PropertyName                              AS ArrayName
+    ,IotDataInput_Data.PropertyValue                             AS OperationCurveData
+  FROM [CParallelArray] AS IotDataInput
+    CROSS APPLY GetRecordProperties(IotDataInput.Data)           AS IotDataInput_Data
+)
+,RealEventData
+AS
+(
+  SELECT 
+     CurveArrays.machine
+    ,CurveArrays.material_number
+    ,CurveArrays.ArrayName
+	  ,GetArrayElement(CurveArrays.OperationCurveData.value,     (CAST(XNumberReferenceList.Id AS BIGINT)))   AS valuePart
+	  ,GetArrayElement(CurveArrays.OperationCurveData.timestamp, (CAST(XNumberReferenceList.Id AS BIGINT)))   AS timestampPart
+	  ,GetArrayElement(CurveArrays.OperationCurveData.timestamp, (CAST(XNumberReferenceList.Id AS BIGINT)-1)) AS lastTimestampPart
+  FROM   CurveArrays as CurveArrays
+    INNER JOIN [XNumberReferenceList] as XNumberReferenceList
+      ON CAST(XNumberReferenceList.Id AS BIGINT) < GetArrayLength(CurveArrays.OperationCurveData.value)
+)
+
+
+SELECT  
+   RealEventData.machine
+  ,RealEventData.material_number
+  ,RealEventData.timestampPart                                                       AS [Ts]
+  ,DATEDIFF(millisecond
+          ,COALESCE (RealEventData.lastTimestampPart, RealEventData.timestampPart) 
+          ,RealEventData.timestampPart)                                              AS TimeOffsetInMs
+, RealEventData.valuePart
+FROM RealEventData
+
+*/

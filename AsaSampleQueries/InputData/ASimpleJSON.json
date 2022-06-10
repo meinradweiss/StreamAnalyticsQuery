@@ -1,0 +1,17 @@
+{
+    "EventTimestamp": "2021-12-08T14:01:14.5094082Z",
+    "SignalLabel": "Temperature",
+    "Value": "12.34",
+    "Text": "",
+    "EventProcessedUtcTime": "2021-12-08T14:01:14.5771421Z",
+    "PartitionId": 1,
+    "EventEnqueuedUtcTime": "2021-12-08T14:01:15.0040000Z",
+    "IoTHub": {
+        "MessageId": null,
+        "CorrelationId": null,
+        "ConnectionDeviceId": "mewTsSmartStartHubDevice001",
+        "ConnectionDeviceGenerationId": "637740536776612383",
+        "EnqueuedTime": "2021-12-08T14:01:15.0050000Z"
+    }
+}
+   

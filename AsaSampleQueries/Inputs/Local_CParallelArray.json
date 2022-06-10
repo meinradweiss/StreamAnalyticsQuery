@@ -1,0 +1,7 @@
+{
+    "InputAlias": "CParallelArray",
+    "Type": "Data Stream",
+    "Format": "Json",
+    "FilePath": "../InputData/CParallelArray.json",
+    "ScriptType": "InputMock"
+}

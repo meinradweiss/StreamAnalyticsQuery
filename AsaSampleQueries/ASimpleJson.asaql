@@ -1,0 +1,19 @@
+
+-- [ASimpleJSON]
+
+SELECT 
+   TRY_CAST(EventTimestamp AS DATETIME)                 AS [Ts]
+   ,IoTHub.ConnectionDeviceId                           AS [DeviceId]
+   ,SignalLabel                                         AS [Measurand]
+   ,CONCAT(IoTHub.ConnectionDeviceId, '_', SignalLabel) AS [SignalName]
+   ,TRY_CAST([Value] AS FLOAT)                          AS [MeasurementValue]
+   ,CASE WHEN LEN([Text]) > 0 THEN [Text]   
+   						                ELSE NULL 
+   END                                                  AS [MeasurementText]
+   ,EventTimestamp                                      AS [SourceTS]
+   ,[Value]                                             AS [SourceMeasurementValue]
+   ,[Text]                                              AS [SourceMeasurementText]
+  
+   ,[ASimpleJSON]                                       AS [SourceMessage]
+
+FROM [ASimpleJSON]

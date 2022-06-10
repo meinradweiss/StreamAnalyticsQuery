@@ -1,0 +1,7 @@
+{
+    "InputAlias": "DParseGpsOrNot",
+    "Type": "Data Stream",
+    "Format": "Json",
+    "FilePath": "../InputData/DParseGpsOrNot.json",
+    "ScriptType": "InputMock"
+}

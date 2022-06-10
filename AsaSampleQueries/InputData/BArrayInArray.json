@@ -1,0 +1,65 @@
+{
+    "EventType": 7,
+    "Data": {
+        "OperationTimeStamp": "2021-08-24T21:42:20.799",
+        "Energie": 3804.19,
+        "Spannung": 1333.38,
+        "Strom": 3133.66,
+        "Temperatur": 335.958,
+        "OperationCurveData": [
+            {
+                "Values": [
+                    {
+                        "Value": "-28.629000",
+                        "TimeOffsetInMs": 0.0
+                    },
+                    {
+                        "Value": "-28.687000",
+                        "TimeOffsetInMs": 10.95
+                    },
+                    {
+                        "Value": "-28.691000",
+                        "TimeOffsetInMs": 21.9
+                    }
+                ],
+                "SensorId": "QDat.RecordIndex7.KurveWeg"
+            },
+            {
+                "Values": [
+                    {
+                        "Value": "0",
+                        "TimeOffsetInMs": 0.0
+                    },
+                    {
+                        "Value": "0",
+                        "TimeOffsetInMs": 10.95
+                    },
+                    {
+                        "Value": "0",
+                        "TimeOffsetInMs": 21.9
+                    }
+                ],
+                "SensorId": "QDat.RecordIndex6.KurveStellwert"
+            },
+            {
+                "Values": [
+                    {
+                        "Value": "335.959",
+                        "TimeOffsetInMs": 0.0
+                    },
+                    {
+                        "Value": "335.969",
+                        "TimeOffsetInMs": 10.95
+                    },
+                    {
+                        "Value": "335.959",
+                        "TimeOffsetInMs": 21.9
+                    }
+                ],
+                "SensorId": "QDat.RecordIndex5.KurveTemperatur"
+            }       ],
+        "MaterialNumber": 2123821,
+        "ProductionOrderKey": "14773193"
+    },
+    "Timestamp": "2021-08-24T19:45:39.146Z"
+}

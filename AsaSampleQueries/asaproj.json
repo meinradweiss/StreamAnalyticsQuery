@@ -1,0 +1,30 @@
+{
+    "name": "ASASampleQueries",
+    "startFile": "BArrayInArray.asaql",
+    "configurations": [
+        {
+            "filePath": "JobConfig.json",
+            "subType": "JobConfig"
+        },
+        {
+            "filePath": "Inputs/Local_ASimpleJSON.json",
+            "subType": "InputMock"
+        },
+        {
+            "filePath": "Inputs/Local_BArrayInArray.json",
+            "subType": "InputMock"
+        },
+        {
+            "filePath": "Inputs/Local_XNumberReferenceList.json",
+            "subType": "InputMock"
+        },
+        {
+            "filePath": "Inputs/Local_CParallelArray.json",
+            "subType": "InputMock"
+        },
+        {
+            "filePath": "Inputs/Local_DParseGpsOrNot.json",
+            "subType": "InputMock"
+        }
+    ]
+}

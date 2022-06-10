@@ -1,0 +1,7 @@
+{
+    "InputAlias": "BArrayInArray",
+    "Type": "Data Stream",
+    "Format": "Json",
+    "FilePath": "../InputData/BArrayInArray.json",
+    "ScriptType": "InputMock"
+}

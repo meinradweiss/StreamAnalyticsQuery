@@ -1,0 +1,75 @@
+
+
+-- [DParseGpsOrNot]
+
+
+
+WITH 
+IoTDataInputWithSignalName  AS
+(
+
+SELECT 
+   TRY_CAST(DATEADD(SECOND,[IoTDataInput].reported_at/1000,'1970-01-01') AS DATETIME)                AS [Ts]
+  ,[IoTDataInput].dev_eui                                                                            AS [DeviceId]
+  ,payload.PropertyName                                                                              AS [PropertyName]
+  ,payload.PropertyValue																			   AS [PropertyValue]
+  ,payload.PropertyName                                                                              AS [Measurand]
+  ,CONCAT([IoTDataInput].dev_eui, '_', payload.PropertyName)                                         AS [SignalName]
+  ,TRY_CAST(payload.PropertyValue AS FLOAT)                                                          AS [MeasurementValue]
+  ,CASE WHEN TRY_CAST(payload.PropertyValue AS FLOAT) IS NULL THEN payload.PropertyValue                  
+                                                             ELSE NULL 
+   END                                                                                               AS [MeasurementText]
+  ,[IoTDataInput].reported_at                                                                        AS [SourceTS]
+  ,payload.PropertyValue                                                                             AS [SourceMeasurementValue]
+  ,payload.PropertyValue                                                                             AS [SourceMeasurementText]
+  ,[IoTDataInput]                                                                                    AS [SourceMessage] 
+FROM [DParseGpsOrNot] as [IoTDataInput]
+CROSS APPLY GETRECORDPROPERTIES([IoTDataInput].decoded.payload) as payload 
+WHERE  payload.PropertyName <> 'accelerometer'              -- They will be handled with next queries
+--  AND  payload.PropertyName <> 'gps'                      -- Optional filter -> can be useful to keep it twice
+ 
+UNION ALL
+
+SELECT 
+  TRY_CAST(DATEADD(SECOND,[IoTDataInput].reported_at/1000,'1970-01-01') AS DATETIME)                 AS [Ts]
+  ,[IoTDataInput].dev_eui                                                                            AS [DeviceId]
+  ,gps.PropertyName                                                                                  AS [PropertyName]
+  ,gps.PropertyValue																				   AS [PropertyValue]
+  ,gps.PropertyName                                                                                  AS [Measurand]
+  ,CONCAT([IoTDataInput].dev_eui, '_', gps.PropertyName)                                             AS [SignalName]
+  ,TRY_CAST(gps.PropertyValue AS FLOAT)                                                              AS [MeasurementValue]
+  ,CASE WHEN TRY_CAST(gps.PropertyValue AS FLOAT) IS NULL THEN gps.PropertyValue                  
+                                                          ELSE NULL 
+  END                                                                                                AS [MeasurementText]
+  ,[IoTDataInput].reported_at                                                                        AS [SourceTS]
+  ,gps.PropertyValue                                                                                 AS [SourceMeasurementValue]
+  ,gps.PropertyValue                                                                                 AS [SourceMeasurementText]
+  ,[IoTDataInput]                                                                                    AS [SourceMessage] 
+  FROM [DParseGpsOrNot] as [IoTDataInput]
+  CROSS APPLY GETRECORDPROPERTIES([IoTDataInput].decoded.payload.gps) AS gps 
+
+
+UNION ALL
+
+SELECT 
+  TRY_CAST(DATEADD(SECOND,[IoTDataInput].reported_at/1000,'1970-01-01') AS DATETIME)                 AS [Ts]
+  ,[IoTDataInput].dev_eui                                                                            AS [DeviceId]
+  ,CONCAT('accelerometer.', accelerometer.PropertyName)                                              AS [PropertyName]
+  ,accelerometer.PropertyValue                                                                       AS [PropertyValue]
+  ,CONCAT('accelerometer.', accelerometer.PropertyName)                                              AS [Measurand]
+  ,CONCAT([IoTDataInput].dev_eui, '_accelerometer.', accelerometer.PropertyName)                     AS [SignalName]
+  ,TRY_CAST(accelerometer.PropertyValue AS FLOAT)                                                    AS [MeasurementValue]
+  ,CASE WHEN TRY_CAST(accelerometer.PropertyValue AS FLOAT) IS NULL THEN accelerometer.PropertyValue                  
+                                                   ELSE NULL 
+  END                                                                                                AS [MeasurementText]
+  ,[IoTDataInput].reported_at                                                                        AS [SourceTS]
+  ,accelerometer.PropertyValue                                                                       AS [SourceMeasurementValue]
+  ,accelerometer.PropertyValue                                                                       AS [SourceMeasurementText]
+  ,[IoTDataInput]                                                                                    AS [SourceMessage] 
+  FROM [DParseGpsOrNot] as [IoTDataInput]
+  CROSS APPLY GETRECORDPROPERTIES([IoTDataInput].decoded.payload.accelerometer) AS accelerometer 
+)
+-- Local test
+SELECT *
+FROM IoTDataInputWithSignalName  
+
