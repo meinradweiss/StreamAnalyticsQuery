@@ -1,0 +1,84 @@
+
+
+-- [CParallelArray]
+
+
+-- To enable this test, copy this file to "ASASampleQueries.asaql"
+
+-- Use the following commands to comment/uncomment queries
+-- Ctrl+K+C/Ctrl+K+U
+
+
+-- 1. Reads the IotDataInput.data record properties and joins it with the reference data table XNumberReferenceList
+--    This table just contains a list of int values: 0, 1, 2, ...
+--    The values are then used to query the values of [value] and [timestamp] in the corresponding arrays
+
+
+-- WITH CurveArrays
+-- AS
+-- (
+--   SELECT 
+--      IotDataInput.machine
+--     ,IotDataInput.material_number
+--     ,IotDataInput_Data.PropertyName                              AS ArrayName
+--     ,IotDataInput_Data.PropertyValue                             AS OperationCurveData
+--   FROM [CParallelArray] AS IotDataInput
+--     CROSS APPLY GetRecordProperties(IotDataInput.data)           AS IotDataInput_Data
+-- )
+
+  
+--   SELECT 
+--      CurveArrays.machine
+--     ,CurveArrays.material_number
+--     ,CurveArrays.ArrayName
+-- 	  ,GetArrayElement(CurveArrays.OperationCurveData.value,     (CAST(XNumberReferenceList.Id AS BIGINT))) AS valuePart
+-- 	  ,GetArrayElement(CurveArrays.OperationCurveData.timestamp, (CAST(XNumberReferenceList.Id AS BIGINT))) AS timestampPart
+--   FROM   CurveArrays as CurveArrays
+--     INNER JOIN [XNumberReferenceList] as XNumberReferenceList
+--       ON CAST(XNumberReferenceList.Id AS BIGINT) < GetArrayLength(CurveArrays.OperationCurveData.value)
+
+
+
+
+
+-- 2. Calculates the TimeOffsetInMs from the current timestampPart and the last timestampPart
+
+
+WITH CurveArrays
+AS
+(
+  SELECT 
+     IotDataInput.machine
+    ,IotDataInput.material_number
+    ,IotDataInput_Data.PropertyName                              AS ArrayName
+    ,IotDataInput_Data.PropertyValue                             AS OperationCurveData
+  FROM [CParallelArray] AS IotDataInput
+    CROSS APPLY GetRecordProperties(IotDataInput.Data)           AS IotDataInput_Data
+)
+,RealEventData
+AS
+(
+  SELECT 
+     CurveArrays.machine
+    ,CurveArrays.material_number
+    ,CurveArrays.ArrayName
+	  ,GetArrayElement(CurveArrays.OperationCurveData.value,     (CAST(XNumberReferenceList.Id AS BIGINT)))   AS valuePart
+	  ,GetArrayElement(CurveArrays.OperationCurveData.timestamp, (CAST(XNumberReferenceList.Id AS BIGINT)))   AS timestampPart
+	  ,GetArrayElement(CurveArrays.OperationCurveData.timestamp, (CAST(XNumberReferenceList.Id AS BIGINT)-1)) AS lastTimestampPart
+  FROM   CurveArrays as CurveArrays
+    INNER JOIN [XNumberReferenceList] as XNumberReferenceList
+      ON CAST(XNumberReferenceList.Id AS BIGINT) < GetArrayLength(CurveArrays.OperationCurveData.value)
+)
+
+
+SELECT  
+   RealEventData.machine
+  ,RealEventData.material_number
+  ,RealEventData.ArrayName                                                           AS [Measurand]
+  ,RealEventData.timestampPart                                                       AS [Ts]
+  ,DATEDIFF(millisecond
+          ,COALESCE (RealEventData.lastTimestampPart, RealEventData.timestampPart) 
+          ,RealEventData.timestampPart)                                              AS TimeOffsetInMs
+, RealEventData.valuePart
+FROM RealEventData
+

@@ -1,0 +1,20 @@
+
+
+-- [EHandleUnixTimestamp]
+
+
+-- To enable this test, copy this file to "ASASampleQueries.asaql"
+
+-- Use the following commands to comment/uncomment queries
+-- Ctrl+K+C/Ctrl+K+U
+
+SELECT
+
+   TRY_CAST(DATEADD(SECOND,[IoTDataInput].reported_at/1000,'1970-01-01') AS DATETIME)                AS [Ts_SecondPrecision]
+
+  ,TRY_CAST(DATEADD(MILLISECOND, [IoTDataInput].reported_at - ([IoTDataInput].reported_at/1000)*1000
+          , DATEADD(SECOND,      [IoTDataInput].reported_at / 1000, '1970-01-01')) AS DATETIME)      AS [Ts_MillisecondPrecision]
+
+FROM [DParseGpsOrNot] AS [IoTDataInput]
+          
+

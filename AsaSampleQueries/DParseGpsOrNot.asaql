@@ -3,6 +3,11 @@
 -- [DParseGpsOrNot]
 
 
+-- To enable this test, copy this file to "ASASampleQueries.asaql"
+
+-- Use the following commands to comment/uncomment queries
+-- Ctrl+K+C/Ctrl+K+U
+
 
 WITH 
 IoTDataInputWithSignalName  AS
@@ -12,7 +17,7 @@ SELECT
    TRY_CAST(DATEADD(SECOND,[IoTDataInput].reported_at/1000,'1970-01-01') AS DATETIME)                AS [Ts]
   ,[IoTDataInput].dev_eui                                                                            AS [DeviceId]
   ,payload.PropertyName                                                                              AS [PropertyName]
-  ,payload.PropertyValue																			   AS [PropertyValue]
+  ,payload.PropertyValue																			                                       AS [PropertyValue]
   ,payload.PropertyName                                                                              AS [Measurand]
   ,CONCAT([IoTDataInput].dev_eui, '_', payload.PropertyName)                                         AS [SignalName]
   ,TRY_CAST(payload.PropertyValue AS FLOAT)                                                          AS [MeasurementValue]
