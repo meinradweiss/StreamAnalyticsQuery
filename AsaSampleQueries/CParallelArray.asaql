@@ -64,6 +64,7 @@ AS
     ,CurveArrays.ArrayName
 	  ,GetArrayElement(CurveArrays.OperationCurveData.value,     (CAST(XNumberReferenceList.Id AS BIGINT)))   AS valuePart
 	  ,GetArrayElement(CurveArrays.OperationCurveData.timestamp, (CAST(XNumberReferenceList.Id AS BIGINT)))   AS timestampPart
+	  ,GetArrayElement(CurveArrays.OperationCurveData.timestamp, 0)                                           AS firstTimestampInArray
 	  ,GetArrayElement(CurveArrays.OperationCurveData.timestamp, (CAST(XNumberReferenceList.Id AS BIGINT)-1)) AS lastTimestampPart
   FROM   CurveArrays as CurveArrays
     INNER JOIN [XNumberReferenceList] as XNumberReferenceList
@@ -78,7 +79,12 @@ SELECT
   ,RealEventData.timestampPart                                                       AS [Ts]
   ,DATEDIFF(millisecond
           ,COALESCE (RealEventData.lastTimestampPart, RealEventData.timestampPart) 
-          ,RealEventData.timestampPart)                                              AS TimeOffsetInMs
+          ,RealEventData.timestampPart)                                              AS StepDurationInMs
+  ,DATEDIFF(millisecond
+            ,RealEventData.firstTimestampInArray 
+            ,RealEventData.timestampPart)                                            AS TimeOffsetInMs  
+  ,RealEventData.firstTimestampInArray
+  
 , RealEventData.valuePart
 FROM RealEventData
 

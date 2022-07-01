@@ -1,6 +1,6 @@
 {
     "name": "ASASampleQueries",
-    "startFile": "ASASampleQueries.asaql",
+    "startFile": "CParallelArray.asaql",
     "configurations": [
         {
             "filePath": "JobConfig.json",
